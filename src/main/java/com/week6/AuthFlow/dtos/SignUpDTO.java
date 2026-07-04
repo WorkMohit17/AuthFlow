@@ -10,7 +10,7 @@ import lombok.Data;
 public class SignUpDTO {
     @NotBlank
     @NotNull
-    private String username;
+    private String name;
 
     @NotNull
     @NotBlank
