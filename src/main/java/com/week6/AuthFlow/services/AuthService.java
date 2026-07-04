@@ -6,6 +6,8 @@ import com.week6.AuthFlow.dtos.SignUpDTO;
 import com.week6.AuthFlow.dtos.SignUpResponseDTO;
 import com.week6.AuthFlow.entities.UserEntity;
 import com.week6.AuthFlow.repositories.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,7 @@ public class AuthService {
     private final ModelMapper mapper;
 
     private final JwtService jwtService;
+    private final UserService userService;
 
     private final UserRepository userRepository;
 
@@ -57,4 +60,14 @@ public class AuthService {
                 .build();
     }
 
+    public LoginResponseDTO refreshToken(String refreshToken) {
+        Long userId = jwtService.getUserIdFromToken(refreshToken);
+        UserEntity user = userService.getUserById(userId);
+        String accessToken = jwtService.generateAccessToken(user);
+        return LoginResponseDTO
+                .builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 }
