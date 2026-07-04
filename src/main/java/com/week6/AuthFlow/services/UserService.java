@@ -19,7 +19,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository
                 .findByEmail(email)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     public UserEntity getUserById(Long userId){
