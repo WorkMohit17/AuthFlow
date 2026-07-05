@@ -6,8 +6,7 @@ import com.week6.AuthFlow.dtos.SignUpDTO;
 import com.week6.AuthFlow.dtos.SignUpResponseDTO;
 import com.week6.AuthFlow.entities.UserEntity;
 import com.week6.AuthFlow.repositories.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +29,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-
+    @Transactional
     public SignUpResponseDTO signUp(SignUpDTO request){
         UserEntity user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if(user != null)

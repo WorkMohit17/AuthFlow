@@ -5,7 +5,6 @@ import com.week6.AuthFlow.dtos.LoginResponseDTO;
 import com.week6.AuthFlow.dtos.SignUpDTO;
 import com.week6.AuthFlow.dtos.SignUpResponseDTO;
 import com.week6.AuthFlow.services.AuthService;
-import com.week6.AuthFlow.services.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
