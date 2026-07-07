@@ -52,4 +52,15 @@ public class AuthContoller {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletResponse response){
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("Logged Out Successfully");
+    }
+
 }
