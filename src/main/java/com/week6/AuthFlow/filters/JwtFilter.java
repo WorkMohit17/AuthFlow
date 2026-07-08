@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            String token = requestHeader.split("Bearer ")[1];
+            String token = requestHeader.substring(7);
             Long userId = jwtService.getUserIdFromToken(token);
 
             if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){

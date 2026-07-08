@@ -34,7 +34,9 @@ public class AuthContoller {
         Cookie cookie = new Cookie(
                 "refreshToken", responseDTO.getRefreshToken()
         );
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(cookie);
         return ResponseEntity.ok(responseDTO);
     }
@@ -42,7 +44,13 @@ public class AuthContoller {
     @PostMapping("/refresh")
     public ResponseEntity<LoginResponseDTO> refresh(HttpServletRequest request){
 
-        String refreshToken = Arrays.stream(request.getCookies())
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
+            throw new AuthenticationServiceException("Refresh token not found");
+        }
+
+        String refreshToken = Arrays.stream(cookies)
                 .filter(cookie -> "refreshToken".equals(cookie.getName()))
                 .findFirst()
                 .map(Cookie::getValue)
@@ -57,6 +65,7 @@ public class AuthContoller {
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
+        cookie.setPath("/");
 
         response.addCookie(cookie);
 
