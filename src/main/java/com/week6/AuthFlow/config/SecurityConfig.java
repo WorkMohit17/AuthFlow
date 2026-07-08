@@ -1,5 +1,6 @@
 package com.week6.AuthFlow.config;
 
+import com.week6.AuthFlow.advices.CustomAccessDeniedHandler;
 import com.week6.AuthFlow.filters.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,8 @@ public class SecurityConfig {
             "/subscriptions/**"
     };
 
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity security){
 
@@ -42,6 +45,8 @@ public class SecurityConfig {
                         auth.requestMatchers(permittedRoutes).permitAll()
                                 .anyRequest().authenticated()
                 )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return security.build();

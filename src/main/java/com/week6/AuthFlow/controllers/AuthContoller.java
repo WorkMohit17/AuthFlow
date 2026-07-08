@@ -1,5 +1,6 @@
 package com.week6.AuthFlow.controllers;
 
+import com.week6.AuthFlow.advices.APIResponse;
 import com.week6.AuthFlow.dtos.LoginDTO;
 import com.week6.AuthFlow.dtos.LoginResponseDTO;
 import com.week6.AuthFlow.dtos.SignUpDTO;
@@ -8,6 +9,7 @@ import com.week6.AuthFlow.services.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -23,13 +25,13 @@ public class AuthContoller {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignUpResponseDTO> signup(@RequestBody SignUpDTO request){
+    public ResponseEntity<SignUpResponseDTO> signup(@Valid @RequestBody SignUpDTO request){
         SignUpResponseDTO response = authService.signUp(request);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO request, HttpServletResponse response){
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginDTO request, HttpServletResponse response){
         LoginResponseDTO responseDTO = authService.login(request);
         Cookie cookie = new Cookie(
                 "refreshToken", responseDTO.getRefreshToken()
@@ -61,8 +63,8 @@ public class AuthContoller {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request,
-                                         HttpServletResponse response) {
+    public ResponseEntity<APIResponse<String>> logout(HttpServletRequest request,
+                                                     HttpServletResponse response) {
 
         Cookie[] cookies = request.getCookies();
 
@@ -80,7 +82,7 @@ public class AuthContoller {
 
         response.addCookie(cookie);
 
-        return ResponseEntity.ok("Logged Out Successfully");
+        return ResponseEntity.ok(new APIResponse<>("Logged out successfully."));
     }
 
 }

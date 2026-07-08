@@ -8,13 +8,11 @@ import lombok.Data;
 
 @Data
 public class LoginDTO {
-    @NotNull
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email is required.")
+    @Email(message = "Please enter a valid email address.")
     private String email;
 
-    @NotNull
-    @NotBlank
-    @StrongPassword
+    @NotBlank(message = "Password is required.")
+    @StrongPassword(message = "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.")
     private String password;
 }

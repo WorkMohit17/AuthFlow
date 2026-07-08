@@ -1,7 +1,9 @@
 package com.week6.AuthFlow.controllers;
 
+import com.week6.AuthFlow.advices.APIResponse;
 import com.week6.AuthFlow.dtos.SubscriptionDTO;
 import com.week6.AuthFlow.services.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +18,23 @@ public class SubscriptionController {
     private final AuthService authService;
 
     @PostMapping("/{userId}")
-    public ResponseEntity<String> addSubscription(
+    public ResponseEntity<APIResponse<String>> addSubscription(
             @PathVariable Long userId,
-            @RequestBody SubscriptionDTO dto){
-        log.info("Controller called");
-        log.info(dto.getSubscription().name());
+            @Valid @RequestBody SubscriptionDTO dto) {
+
         authService.addSubscription(userId, dto.getSubscription());
-        return ResponseEntity.ok("Subscription added.");
+
+        return ResponseEntity.ok(new APIResponse<>("Subscription added."));
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> removeSubscription(
+    public ResponseEntity<APIResponse<String>> removeSubscription(
             @PathVariable Long userId,
-            @RequestBody SubscriptionDTO dto){
+            @Valid @RequestBody SubscriptionDTO dto){
 
         authService.removeSubscription(userId, dto.getSubscription());
 
-        return ResponseEntity.ok("Subscription removed.");
+        return ResponseEntity.ok(new APIResponse<>("Subscription removed."));
     }
 
 }

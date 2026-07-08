@@ -1,6 +1,8 @@
 package com.week6.AuthFlow.controllers;
 
+import com.week6.AuthFlow.advices.APIResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +57,7 @@ public class ResourceController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyAuthority('FREE', 'BASIC', 'PREMIUM')")
-    public String allResources() {
-        return "Authenticated successfully! You can access protected resources.";
+    public ResponseEntity<APIResponse<String>> allResources() {
+        return ResponseEntity.ok(new APIResponse<>("Authenticated successfully! You can access protected resources."));
     }
 }

@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
     public UserEntity getUserById(Long userId){
         return userRepository
                 .findById(userId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + userId));
     }
 
 }

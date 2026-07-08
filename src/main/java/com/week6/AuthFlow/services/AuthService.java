@@ -15,11 +15,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.HashSet;
 
 @Service
@@ -41,7 +39,7 @@ public class AuthService {
     public SignUpResponseDTO signUp(SignUpDTO request){
         UserEntity user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if(user != null)
-            throw new BadCredentialsException("User with email: "+request.getEmail()+" already exist");
+            throw new IllegalArgumentException("User with email " + request.getEmail() + " already exists.");
         UserEntity toSave = mapper.map(request, UserEntity.class);
         toSave.setPassword(passwordEncoder.encode(request.getPassword()));
         toSave.setSubscriptions(new HashSet<>());
@@ -56,8 +54,6 @@ public class AuthService {
         );
 
         UserEntity user = (UserEntity) authentication.getPrincipal();
-        if(user == null)
-            throw new BadCredentialsException("Invalid credentials");
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -91,11 +87,8 @@ public class AuthService {
 
     @Transactional
     public void addSubscription(Long userId, Subscription subscription){
-        log.info("Service Called");
         UserEntity user = userService.getUserById(userId);
-        log.info(user.getSubscriptions().toString());
         user.getSubscriptions().add(subscription);
-        log.info(user.getSubscriptions().toString());
         userRepository.save(user);
     }
 
