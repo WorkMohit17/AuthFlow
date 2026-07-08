@@ -33,6 +33,7 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final UserService userService;
+    private final SessionService sessionService;
 
     private final UserRepository userRepository;
 
@@ -61,6 +62,8 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
+        sessionService.generateNewSession(user, refreshToken);
+
         return LoginResponseDTO
                 .builder()
                 .accessToken(accessToken)
@@ -68,8 +71,15 @@ public class AuthService {
                 .build();
     }
 
+    @Transactional
+    public void logout(String refreshToken){
+        sessionService.deleteSessionByTRefreshToken(refreshToken);
+    }
+
     public LoginResponseDTO refreshToken(String refreshToken) {
         Long userId = jwtService.getUserIdFromToken(refreshToken);
+        sessionService.validateSession(refreshToken);
+
         UserEntity user = userService.getUserById(userId);
         String accessToken = jwtService.generateAccessToken(user);
         return LoginResponseDTO
@@ -78,7 +88,6 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
-
 
     @Transactional
     public void addSubscription(Long userId, Subscription subscription){

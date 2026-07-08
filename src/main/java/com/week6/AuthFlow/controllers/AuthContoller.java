@@ -61,11 +61,22 @@ public class AuthContoller {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response){
+    public ResponseEntity<String> logout(HttpServletRequest request,
+                                         HttpServletResponse response) {
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            Arrays.stream(cookies)
+                    .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                    .findFirst()
+                    .ifPresent(cookie -> authService.logout(cookie.getValue()));
+        }
+
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
         cookie.setPath("/");
+        cookie.setMaxAge(0);
 
         response.addCookie(cookie);
 
